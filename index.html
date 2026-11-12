@@ -7,11 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    html {
+      font-size: 18px;
+    }
     body {
       font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: #f1f5f9;
       color: #0f172a;
       -webkit-tap-highlight-color: transparent;
+      line-height: 1.6;
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -59,13 +63,13 @@
   <!-- 頂部導覽列 -->
   <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center font-bold text-slate-950 text-lg shadow-inner">嘉</div>
+      <a href="#home" onclick="goHome(event)" title="返回首頁" class="flex items-center gap-3 group cursor-pointer focus:outline-none">
+        <div class="w-10 h-10 rounded-xl bg-teal-500 group-hover:bg-teal-400 active:scale-95 transition flex items-center justify-center font-bold text-slate-950 text-xl shadow-inner">嘉</div>
         <div>
-          <h1 class="font-bold text-base sm:text-lg leading-tight tracking-wide">嘉義女中整潔評分系統</h1>
-          <p id="header-subtitle" class="text-xs text-slate-300">學務處衛生組｜載入週次中...</p>
+          <h1 class="font-bold text-lg sm:text-xl leading-tight tracking-wide group-hover:text-teal-200 transition">嘉義女中整潔評分系統</h1>
+          <p id="header-subtitle" class="text-xs sm:text-sm text-slate-300">學務處衛生組｜載入週次中...</p>
         </div>
-      </div>
+      </a>
       <div class="flex items-center gap-2">
         <span id="current-user-badge" class="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-teal-300 border border-slate-700"></span>
         <button id="btn-logout" onclick="logout()" class="hidden px-3 py-1.5 rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white text-xs font-medium transition">登出</button>
@@ -97,10 +101,10 @@
 
       <!-- 四角色切換頁籤 -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="grid grid-cols-4 border-b border-slate-200 bg-slate-50 text-center text-xs sm:text-sm font-semibold">
-          <button type="button" onclick="switchLoginTab('student')" id="ltab-student" class="py-3.5 px-1 border-b-2 border-teal-600 text-teal-700 bg-white transition">學生評分員</button>
+        <div class="grid grid-cols-2 sm:grid-cols-4 border-b border-slate-200 bg-slate-50 text-center text-sm sm:text-base font-bold">
+          <button type="button" onclick="switchLoginTab('student')" id="ltab-student" class="py-3.5 px-1 border-b-2 border-teal-600 text-teal-700 bg-white transition">服務/惜福股長評分</button>
           <button type="button" onclick="switchLoginTab('teacher')" id="ltab-teacher" class="py-3.5 px-1 border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">師長評分</button>
-          <button type="button" onclick="switchLoginTab('homeroom')" id="ltab-homeroom" class="py-3.5 px-1 border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">導師查詢</button>
+          <button type="button" onclick="switchLoginTab('homeroom')" id="ltab-homeroom" class="py-3.5 px-1 border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">導師/班級查詢</button>
           <button type="button" onclick="switchLoginTab('admin')" id="ltab-admin" class="py-3.5 px-1 border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition">衛生組後台</button>
         </div>
 
@@ -110,7 +114,7 @@
             <div class="bg-teal-50/70 rounded-xl p-3.5 text-xs text-teal-900 leading-relaxed border border-teal-100">
               <p class="font-bold mb-1">📋 輪值規則提醒（09:55 ~ 10:10）</p>
               <p>• 跨年級互評：<strong>高三評高二、高二評高一、高一評高三</strong>。</p>
-              <p>• 系統將依您的班級自動鎖定本週輪值區域（公共區／責任區／班廁），16 班舞蹈班免輪值。</p>
+              <p>• 系統將依您的班級自動鎖定本週輪值區域（公共區／責任區／班廁）。</p>
             </div>
             <div>
               <label class="block text-sm font-semibold text-slate-700 mb-1">當週評分通行碼 <span class="text-rose-500">*</span></label>
@@ -180,7 +184,7 @@
               <label class="block text-sm font-semibold text-slate-700 mb-1">查詢密碼 <span class="text-rose-500">*</span></label>
               <input type="password" id="hr-password" required placeholder="預設與教師代號相同" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-base focus:ring-2 focus:ring-amber-500 outline-none" />
             </div>
-            <button type="submit" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-base shadow-sm transition">進入班級整潔查詢</button>
+            <button type="submit" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-base shadow-sm transition">進入導師/班級查詢</button>
           </form>
 
           <!-- 1.4 衛生組長後台登入表單 -->
@@ -338,7 +342,7 @@
       <!-- 頂部班級與週次控制列 -->
       <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 id="hr-class-heading" class="text-xl font-bold text-slate-900">導師查詢專區</h2>
+          <h2 id="hr-class-heading" class="text-xl font-bold text-slate-900">導師/班級查詢專區</h2>
           <p id="hr-teacher-sub" class="text-xs text-slate-500 mt-0.5"></p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
@@ -1005,6 +1009,19 @@
       APP_STATE.user = user;
       sessionStorage.setItem('CYGSH_CLEAN_SESSION', JSON.stringify({ token, user }));
       routeAfterLogin();
+    }
+
+    function goHome(e) {
+      if (e) e.preventDefault();
+      if (APP_STATE.token && APP_STATE.user) {
+        if (!confirm('確定要返回首頁（並登出目前身分）嗎？')) return;
+        logout();
+      } else {
+        ['view-scorer', 'view-homeroom', 'view-admin'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('view-login').classList.remove('hidden');
+        switchLoginTab('student');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
 
     function logout() {
