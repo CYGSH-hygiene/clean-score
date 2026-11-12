@@ -202,7 +202,7 @@
       </div>
     </section>
 
-    <!-- ==================== 2. 評分員操作視圖 (學生與師長共用) ==================== -->
+    <!-- ==================== 2. 評分員操作視圖 (1~16班直式一覽表＋一次送出) ==================== -->
     <section id="view-scorer" class="hidden space-y-4">
       <!-- 頂部組長廣播 -->
       <div id="scorer-broadcast-bar" class="bg-sky-50 border border-sky-200 rounded-xl px-4 py-3 text-base sm:text-lg text-sky-900 flex items-center gap-2.5 hidden">
@@ -210,129 +210,77 @@
         <span id="scorer-broadcast-text" class="font-medium"></span>
       </div>
 
-      <!-- 任務狀態與進度總覽卡 -->
+      <!-- 任務狀態與統計總覽卡 -->
       <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <span id="scorer-duty-badge" class="inline-block px-3 py-1 rounded-lg bg-teal-600 text-white font-bold text-sm"></span>
-            <p id="scorer-date-label" class="text-xs text-slate-500 mt-1"></p>
+            <span id="scorer-duty-badge" class="inline-block px-3.5 py-1.5 rounded-lg bg-teal-600 text-white font-bold text-base"></span>
+            <p id="scorer-date-label" class="text-xs sm:text-sm text-slate-500 mt-1.5"></p>
           </div>
-          <div id="scorer-progress-summary" class="text-right">
-            <p class="text-sm font-bold text-slate-800" id="scorer-progress-text">今日進度：0 / 16 班</p>
-            <p class="text-xs text-rose-600 mt-0.5 max-w-md" id="scorer-missing-text"></p>
+          <div class="text-left sm:text-right space-y-1">
+            <p class="text-sm sm:text-base font-bold text-slate-800" id="scorer-batch-summary">統計：加分 0 班 ｜ 0.0 分 16 班 ｜ 扣分 0 班</p>
+            <div class="flex flex-wrap sm:justify-end items-center gap-2 text-xs">
+              <span id="scorer-submit-status-badge" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">今日尚未送出</span>
+              <button type="button" onclick="resetAllBatchRows()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition">全部重設為 0.0</button>
+            </div>
           </div>
         </div>
 
         <!-- 師長專用：年級與區域切換器 -->
-        <div id="teacher-switcher-bar" class="hidden mt-3 pt-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div id="teacher-switcher-bar" class="hidden mt-4 pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-500 mb-1">1. 切換受評年級</label>
             <div class="grid grid-cols-3 gap-1.5">
-              <button type="button" onclick="setTeacherTargetGrade(1)" id="tgrade-btn-1" class="py-2 rounded-lg text-xs font-bold border transition">高一 (<span id="tprog-1">0/16</span>)</button>
-              <button type="button" onclick="setTeacherTargetGrade(2)" id="tgrade-btn-2" class="py-2 rounded-lg text-xs font-bold border transition">高二 (<span id="tprog-2">0/16</span>)</button>
-              <button type="button" onclick="setTeacherTargetGrade(3)" id="tgrade-btn-3" class="py-2 rounded-lg text-xs font-bold border transition">高三 (<span id="tprog-3">0/16</span>)</button>
+              <button type="button" onclick="setTeacherTargetGrade(1)" id="tgrade-btn-1" class="py-2 rounded-lg text-xs sm:text-sm font-bold border transition">高一 (<span id="tprog-1">0/16</span>)</button>
+              <button type="button" onclick="setTeacherTargetGrade(2)" id="tgrade-btn-2" class="py-2 rounded-lg text-xs sm:text-sm font-bold border transition">高二 (<span id="tprog-2">0/16</span>)</button>
+              <button type="button" onclick="setTeacherTargetGrade(3)" id="tgrade-btn-3" class="py-2 rounded-lg text-xs sm:text-sm font-bold border transition">高三 (<span id="tprog-3">0/16</span>)</button>
             </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-500 mb-1">2. 切換評分區域</label>
             <div class="grid grid-cols-3 gap-1.5">
-              <button type="button" onclick="setTeacherTargetArea('公共區')" id="tarea-btn-公共區" class="py-2 rounded-lg text-xs font-bold border transition">公共區</button>
-              <button type="button" onclick="setTeacherTargetArea('責任區')" id="tarea-btn-責任區" class="py-2 rounded-lg text-xs font-bold border transition">責任區</button>
-              <button type="button" onclick="setTeacherTargetArea('班廁')" id="tarea-btn-班廁" class="py-2 rounded-lg text-xs font-bold border transition">班廁</button>
+              <button type="button" onclick="setTeacherTargetArea('公共區')" id="tarea-btn-公共區" class="py-2 rounded-lg text-xs sm:text-sm font-bold border transition">公共區</button>
+              <button type="button" onclick="setTeacherTargetArea('責任區')" id="tarea-btn-責任區" class="py-2 rounded-lg text-xs sm:text-sm font-bold border transition">責任區</button>
+              <button type="button" onclick="setTeacherTargetArea('班廁')" id="tarea-btn-班廁" class="py-2 rounded-lg text-xs sm:text-sm font-bold border transition">班廁</button>
             </div>
           </div>
         </div>
 
-        <!-- 1~16 班快速點選網格 -->
-        <div class="mt-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-slate-600">點選受評班級（綠底＝今日已評，橘點＝前一日有扣分）</span>
-          </div>
-          <div id="scorer-class-grid" class="grid grid-cols-4 sm:grid-cols-8 gap-2"></div>
+        <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-slate-600">
+          <span>💡 預設皆為 <strong>0.0 分</strong>；僅需針對有加扣分的班級調整分數，扣分時請選掃區、扣分細項並連續上傳照片。</span>
+          <span class="text-orange-700 font-semibold">🟠 橘標＝前一個上課日有扣分</span>
         </div>
       </div>
 
-      <!-- 單班評分操作卡片 -->
-      <div id="scorer-form-card" class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hidden">
-        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
-          <div>
-            <h2 id="selected-class-title" class="text-xl font-bold text-slate-900"></h2>
-            <p id="selected-class-meta" class="text-xs text-slate-500 mt-0.5"></p>
-          </div>
-          <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 cursor-pointer">
-            <input type="checkbox" id="chk-is-correction" class="rounded text-amber-600 w-4 h-4" />
-            <span>這是修正今日已送出紀錄</span>
-          </label>
+      <!-- 直式 1~16 班評分表格容器 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <!-- 電腦版表頭 (lg 以上顯示) -->
+        <div class="hidden lg:grid lg:grid-cols-12 gap-3 bg-slate-800 text-white px-4 py-3 text-sm font-bold items-center">
+          <div class="col-span-2">班級</div>
+          <div class="col-span-2">加扣分</div>
+          <div class="col-span-3">掃區（扣分必填）</div>
+          <div class="col-span-3">扣分細項（可連續複選）</div>
+          <div class="col-span-2">上傳相片（可多張）</div>
         </div>
 
-        <!-- 警示提示區：昨日已有扣分 / 同日重複師長評分 -->
-        <div id="prev-day-alert" class="hidden mt-3 bg-orange-50 border-l-4 border-orange-500 p-3 rounded-r-xl text-xs text-orange-950">
-          <p class="font-bold">⚠️ 昨日（前一個上課日）此區已有扣分紀錄：</p>
-          <p id="prev-day-alert-detail" class="mt-0.5"></p>
+        <!-- 1 到 16 班列表列 -->
+        <div id="batch-class-rows-container" class="divide-y divide-slate-200"></div>
+      </div>
+
+      <!-- 底部固定/顯眼一次送出區塊 -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-200 sticky bottom-2 z-20">
+        <div id="upload-queue-banner" class="hidden mb-3 bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs sm:text-sm text-indigo-900 flex items-center justify-between">
+          <span id="upload-queue-status" class="font-semibold">正在背景上傳照片...</span>
+          <span class="animate-pulse font-bold">請勿關閉網頁</span>
         </div>
-        <div id="same-day-teacher-alert" class="hidden mt-3 bg-purple-50 border-l-4 border-purple-500 p-3 rounded-r-xl text-xs text-purple-950">
-          <p class="font-bold" id="same-day-teacher-alert-text"></p>
-        </div>
-
-        <!-- 加減分快速選擇器 (-1.0 ~ +1.0) -->
-        <div class="mt-4">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-bold text-slate-800">今日加減分數（上限 ±1.0 分）</label>
-            <span id="current-score-display" class="text-lg font-extrabold px-3 py-0.5 rounded-lg bg-slate-100 text-slate-800">0.0</span>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs sm:text-sm text-slate-600 text-center sm:text-left">
+            <p class="font-bold text-slate-800" id="footer-batch-summary">準備送出 16 班評分資料</p>
+            <p class="text-xs text-slate-500">若當日已送出過，再次按確定將自動更新覆蓋今日紀錄。</p>
           </div>
-          <div class="grid grid-cols-7 sm:grid-cols-11 gap-1.5" id="score-buttons-grid"></div>
-        </div>
-
-        <!-- 扣分專用區：掃區連動選單 + 輔導登記單細項 + 多圖批次上傳 -->
-        <div id="deduction-detail-section" class="hidden mt-5 pt-5 border-t-2 border-dashed border-rose-200 space-y-4">
-          <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs text-rose-900 font-medium">
-            🚨 <strong>扣分規定：</strong>分數小於 0 時，必須選擇被扣分掃區位置、至少勾選一項缺失細項，並上傳至少一張現場照片（取代紙本三聯單）。
-          </div>
-
-          <!-- 1. 掃區具體地點下拉選單 -->
-          <div>
-            <label class="block text-sm font-bold text-slate-800 mb-1">被扣分掃區具體地點 <span class="text-rose-500">*</span></label>
-            <select id="deduct-location-select" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-rose-500 outline-none"></select>
-            <div id="deduct-toilet-room-wrap" class="hidden mt-2">
-              <input type="text" id="deduct-toilet-room" placeholder="請填寫具體廁所間數或位置編號（例如：第2間蹲式、洗手台右側）" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 outline-none" />
-            </div>
-            <p id="deduct-boundary-note" class="hidden mt-1.5 text-xs text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200"></p>
-          </div>
-
-          <!-- 2. 扣分細項多選膠囊按鈕 -->
-          <div>
-            <label class="block text-sm font-bold text-slate-800 mb-2">勾選缺失細項（可複選）<span class="text-rose-500">*</span></label>
-            <div id="deduction-pills-container" class="flex flex-wrap gap-2"></div>
-          </div>
-
-          <!-- 3. 其他補充說明 -->
-          <div>
-            <label class="block text-sm font-bold text-slate-800 mb-1">其他補充說明（選填，勾選「其他」時必填）</label>
-            <input type="text" id="deduct-other-note" placeholder="請補充說明現場狀況..." class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:ring-2 focus:ring-rose-500 outline-none" />
-          </div>
-
-          <!-- 4. 批次多張照片上傳與壓縮預覽 -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="text-sm font-bold text-slate-800">現場佐證照片（可一次選取多張，自動壓縮）<span class="text-rose-500">*</span></label>
-              <span id="photo-count-badge" class="text-xs font-semibold text-slate-500">已選 0 張</span>
-            </div>
-            <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-300 hover:border-teal-500 rounded-xl bg-slate-50 hover:bg-teal-50/40 cursor-pointer transition">
-              <span class="text-2xl mb-1">📷</span>
-              <span class="text-xs font-semibold text-slate-700">點擊拍照或從相簿批次選取多張照片</span>
-              <input type="file" id="photo-file-input" accept="image/*" multiple onchange="handlePhotoFilesSelected(event)" class="hidden" />
-            </label>
-            <div id="photo-preview-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-2.5 mt-3"></div>
-          </div>
-        </div>
-
-        <!-- 送出按鈕與背景上傳佇列狀態 -->
-        <div class="mt-6 pt-4 border-t border-slate-100">
-          <div id="upload-queue-banner" class="hidden mb-3 bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs text-indigo-900 flex items-center justify-between">
-            <span id="upload-queue-status" class="font-semibold">正在背景上傳照片...</span>
-            <span class="animate-pulse font-bold">請勿關閉網頁</span>
-          </div>
-          <button type="button" id="btn-submit-score" onclick="submitCurrentClassScore()" class="w-full py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-base shadow-md transition">送出本班今日評分</button>
+          <button type="button" id="btn-submit-batch" onclick="submitAllBatchScores()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-bold text-base sm:text-lg shadow-md transition whitespace-nowrap">
+            ✅ 確認送出今日 16 班評分
+          </button>
         </div>
       </div>
     </section>
@@ -1073,8 +1021,50 @@
     }
 
     // =========================================================================
-    // 4. 評分員工作區 (學生與師長共用)
+    // 4. 評分員工作區 (1~16班直式一覽表＋批次一次送出)
     // =========================================================================
+    // APP_STATE.batchRows: { [classNum]: { scoreTenth, location, toiletRoom, deductionItems: [], otherNote, newPhotos: [], existingPhotos: [] } }
+    APP_STATE.batchRows = {};
+
+    function getBatchDraftKey() {
+      const u = APP_STATE.user || {};
+      const dateStr = (APP_STATE.scorerContext && APP_STATE.scorerContext.todayStr) || 'today';
+      return `CYGSH_BATCH_DRAFT_${dateStr}_${u.role}_${u.scorerClassCode || u.scorerId}_${APP_STATE.selectedTargetGrade}_${APP_STATE.selectedTargetArea}`;
+    }
+
+    function saveBatchDraftToLocal() {
+      try {
+        // 僅暫存分數、地點、扣分細項文字（不存大型 base64 避免超出 localStorage 容量）
+        const slim = {};
+        Object.keys(APP_STATE.batchRows).forEach(c => {
+          const r = APP_STATE.batchRows[c];
+          slim[c] = {
+            scoreTenth: r.scoreTenth,
+            location: r.location,
+            toiletRoom: r.toiletRoom,
+            deductionItems: r.deductionItems,
+            otherNote: r.otherNote
+          };
+        });
+        localStorage.setItem(getBatchDraftKey(), JSON.stringify(slim));
+      } catch (e) {}
+    }
+
+    function loadBatchDraftFromLocal() {
+      try {
+        const raw = localStorage.getItem(getBatchDraftKey());
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function clearBatchDraftFromLocal() {
+      try {
+        localStorage.removeItem(getBatchDraftKey());
+      } catch (e) {}
+    }
+
     async function initScorerWorkspace() {
       try {
         const ctx = await callApi('getScorerContext', {});
@@ -1096,8 +1086,8 @@
           setTeacherTargetArea(APP_STATE.selectedTargetArea || '公共區', true);
         }
 
-        renderScoreButtonsGrid();
-        renderScorerClassGrid();
+        buildBatchRowsState();
+        renderBatchClassTable();
       } catch (err) {
         showToast(err.message, 'error');
         if (err.message.includes('過期') || err.message.includes('憑證')) logout();
@@ -1109,13 +1099,12 @@
       [1, 2, 3].forEach(idx => {
         const btn = document.getElementById('tgrade-btn-' + idx);
         btn.className = idx === g
-          ? 'py-2 rounded-lg text-xs font-bold border border-indigo-600 bg-indigo-600 text-white transition'
-          : 'py-2 rounded-lg text-xs font-bold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition';
+          ? 'py-2 rounded-lg text-xs sm:text-sm font-bold border border-indigo-600 bg-indigo-600 text-white transition'
+          : 'py-2 rounded-lg text-xs sm:text-sm font-bold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition';
       });
       if (!skipRender) {
-        APP_STATE.selectedClassNum = null;
-        document.getElementById('scorer-form-card').classList.add('hidden');
-        renderScorerClassGrid();
+        buildBatchRowsState();
+        renderBatchClassTable();
       }
     }
 
@@ -1124,17 +1113,116 @@
       ['公共區', '責任區', '班廁'].forEach(a => {
         const btn = document.getElementById('tarea-btn-' + a);
         btn.className = a === area
-          ? 'py-2 rounded-lg text-xs font-bold border border-indigo-600 bg-indigo-600 text-white transition'
-          : 'py-2 rounded-lg text-xs font-bold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition';
+          ? 'py-2 rounded-lg text-xs sm:text-sm font-bold border border-indigo-600 bg-indigo-600 text-white transition'
+          : 'py-2 rounded-lg text-xs sm:text-sm font-bold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition';
       });
       if (!skipRender) {
-        APP_STATE.selectedClassNum = null;
-        document.getElementById('scorer-form-card').classList.add('hidden');
-        renderScorerClassGrid();
+        buildBatchRowsState();
+        renderBatchClassTable();
       }
     }
 
-    function renderScorerClassGrid() {
+    function buildBatchRowsState() {
+      const ctx = APP_STATE.scorerContext;
+      const u = APP_STATE.user;
+      const g = APP_STATE.selectedTargetGrade;
+      const area = APP_STATE.selectedTargetArea;
+      const localDraft = loadBatchDraftFromLocal();
+
+      const progressMap = u.role === 'student'
+        ? (ctx.todayStudentProgress || {})
+        : ((ctx.todayTeacherProgress || {})[String(g)] || {});
+
+      APP_STATE.batchRows = {};
+      let submittedCount = 0;
+
+      for (let c = 1; c <= 16; c++) {
+        const clsId = String(g * 100 + c);
+        const slotKey = clsId + '_' + area;
+        const existing = progressMap[slotKey];
+        if (existing) submittedCount++;
+
+        const draftRow = localDraft && localDraft[c];
+        if (existing && !draftRow) {
+          APP_STATE.batchRows[c] = {
+            scoreTenth: Number(existing.scoreTenth || 0),
+            location: existing.specificLocation || '',
+            toiletRoom: '',
+            deductionItems: existing.deductionItems ? existing.deductionItems.split('、').filter(Boolean) : [],
+            otherNote: existing.otherNote || '',
+            newPhotos: [],
+            existingPhotos: existing.photos || []
+          };
+        } else if (draftRow) {
+          APP_STATE.batchRows[c] = {
+            scoreTenth: Number(draftRow.scoreTenth || 0),
+            location: draftRow.location || '',
+            toiletRoom: draftRow.toiletRoom || '',
+            deductionItems: Array.isArray(draftRow.deductionItems) ? draftRow.deductionItems : [],
+            otherNote: draftRow.otherNote || '',
+            newPhotos: [],
+            existingPhotos: (existing && existing.photos) || []
+          };
+        } else {
+          APP_STATE.batchRows[c] = {
+            scoreTenth: 0,
+            location: '',
+            toiletRoom: '',
+            deductionItems: [],
+            otherNote: '',
+            newPhotos: [],
+            existingPhotos: []
+          };
+        }
+      }
+
+      const statusBadge = document.getElementById('scorer-submit-status-badge');
+      if (submittedCount > 0) {
+        statusBadge.textContent = `✅ 今日已送出 ${submittedCount}/16 班（可修改後再次送出覆蓋）`;
+        statusBadge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold';
+      } else {
+        statusBadge.textContent = '今日尚未送出';
+        statusBadge.className = 'px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold';
+      }
+    }
+
+    function resetAllBatchRows() {
+      if (!confirm('確定要將本頁 1 到 16 班的分數全部重設為 0.0 分嗎？')) return;
+      clearBatchDraftFromLocal();
+      for (let c = 1; c <= 16; c++) {
+        APP_STATE.batchRows[c] = {
+          scoreTenth: 0,
+          location: '',
+          toiletRoom: '',
+          deductionItems: [],
+          otherNote: '',
+          newPhotos: [],
+          existingPhotos: APP_STATE.batchRows[c] ? APP_STATE.batchRows[c].existingPhotos : []
+        };
+      }
+      renderBatchClassTable();
+      showToast('已全部重設為 0.0 分', 'info');
+    }
+
+    function getLocationOptionsForClass(clsId, area) {
+      const areaInfo = ((APP_STATE.scorerContext && APP_STATE.scorerContext.cleaningAreas) || {})[clsId] || {};
+      if (area === '公共區') {
+        return areaInfo.publicLocations || [];
+      } else if (area === '班廁') {
+        return areaInfo.toiletLocations || [];
+      } else {
+        const base = [
+          '教室內部（地面、講台、黑板溝槽、桌椅）',
+          '窗戶與窗台（玻璃、軌道溝槽、外瓷磚平台）',
+          '教室外部走廊（地面、掃具擺放）',
+          '垃圾與資源回收區'
+        ];
+        const sinks = (areaInfo.sinkLocations || []).map(s => '【輪值洗手台/飲水機】' + s);
+        return base.concat(sinks);
+      }
+    }
+
+    function renderBatchClassTable() {
       const ctx = APP_STATE.scorerContext;
       const u = APP_STATE.user;
       const g = APP_STATE.selectedTargetGrade;
@@ -1142,8 +1230,7 @@
       const gNames = { 1: '一', 2: '二', 3: '三' };
 
       if (u.role === 'teacher_scorer') {
-        document.getElementById('scorer-duty-badge').textContent =
-          `師長評分：高${gNames[g]}・${area}`;
+        document.getElementById('scorer-duty-badge').textContent = `師長評分：高${gNames[g]}・${area}`;
         [1, 2, 3].forEach(gr => {
           const map = (ctx.todayTeacherProgress || {})[String(gr)] || {};
           let done = 0;
@@ -1155,254 +1242,217 @@
         });
       }
 
-      const grid = document.getElementById('scorer-class-grid');
-      grid.innerHTML = '';
-      let doneCount = 0;
-      const missingNames = [];
+      const deductionOptions = ((ctx.deductionItems || {})[area]) || [];
+      const container = document.getElementById('batch-class-rows-container');
+      container.innerHTML = '';
 
       for (let c = 1; c <= 16; c++) {
         const clsId = String(g * 100 + c);
         const slotKey = clsId + '_' + area;
-        const progressMap = u.role === 'student'
-          ? (ctx.todayStudentProgress || {})
-          : ((ctx.todayTeacherProgress || {})[String(g)] || {});
-        const doneRec = progressMap[slotKey];
-        const prevDeduct = (ctx.previousDayDeducted || {})[slotKey];
+        const rowState = APP_STATE.batchRows[c];
+        const areaInfo = (ctx.cleaningAreas || {})[clsId] || {};
+        const prevDed = (ctx.previousDayDeducted || {})[slotKey];
+        const isNeg = rowState.scoreTenth < 0;
+        const isPos = rowState.scoreTenth > 0;
 
-        if (doneRec) {
-          doneCount++;
-        } else {
-          missingNames.push(gNames[g] + c);
+        // 整列底色
+        let rowBg = 'bg-white';
+        if (isNeg) rowBg = 'bg-rose-50/70';
+        else if (isPos) rowBg = 'bg-emerald-50/60';
+
+        // 加扣分下拉選項 (-1.0 ~ +1.0)
+        let scoreOptsHtml = '';
+        for (let t = 10; t >= -10; t--) {
+          const label = t === 0 ? '0.0（無缺失）' : (t > 0 ? `+${(t / 10).toFixed(1)}（加分）` : `${(t / 10).toFixed(1)}（扣分）`);
+          scoreOptsHtml += `<option value="${t}" ${t === rowState.scoreTenth ? 'selected' : ''}>${label}</option>`;
         }
 
-        const isSelected = APP_STATE.selectedClassNum === c;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.onclick = () => selectTargetClass(c);
-
-        let baseStyle = 'relative py-2.5 px-1 rounded-xl border text-center transition flex flex-col items-center justify-center ';
-        if (isSelected) {
-          baseStyle += 'border-teal-600 ring-2 ring-teal-500 bg-teal-50 text-teal-950 font-extrabold';
-        } else if (doneRec) {
-          baseStyle += 'border-emerald-300 bg-emerald-50/80 text-emerald-900 font-bold';
-        } else {
-          baseStyle += 'border-slate-200 bg-white hover:border-slate-400 text-slate-700 font-semibold';
-        }
-        btn.className = baseStyle;
-
-        const scoreTag = doneRec
-          ? `<span class="text-[11px] mt-0.5 ${doneRec.scoreTenth < 0 ? 'text-rose-600' : 'text-emerald-700'}">${doneRec.scoreTenth > 0 ? '+' : ''}${(doneRec.scoreTenth / 10).toFixed(1)}</span>`
-          : `<span class="text-[11px] mt-0.5 text-slate-400">未評</span>`;
-
-        const prevDot = prevDeduct
-          ? `<span title="昨日已有扣分" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-orange-500"></span>`
-          : '';
-
-        btn.innerHTML = `${prevDot}<span class="text-sm">${gNames[g]}${c}</span>${scoreTag}`;
-        grid.appendChild(btn);
-      }
-
-      document.getElementById('scorer-progress-text').textContent = `今日進度：${doneCount} / 16 班`;
-      document.getElementById('scorer-missing-text').textContent =
-        missingNames.length > 0 ? `尚缺：${missingNames.join('、')}` : '🎉 本區 16 班已全數完成評分！';
-    }
-
-    function renderScoreButtonsGrid() {
-      const grid = document.getElementById('score-buttons-grid');
-      grid.innerHTML = '';
-      for (let t = -10; t <= 10; t++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.dataset.tenth = t;
-        btn.onclick = () => setScoreTenth(t);
-        const label = t === 0 ? '0.0' : (t > 0 ? '+' + (t / 10).toFixed(1) : (t / 10).toFixed(1));
-        btn.textContent = label;
-        grid.appendChild(btn);
-      }
-      updateScoreButtonsHighlight();
-    }
-
-    function setScoreTenth(t) {
-      APP_STATE.selectedScoreTenth = t;
-      updateScoreButtonsHighlight();
-
-      const disp = document.getElementById('current-score-display');
-      const label = t === 0 ? '0.0' : (t > 0 ? '+' + (t / 10).toFixed(1) : (t / 10).toFixed(1));
-      disp.textContent = label;
-
-      const dedSec = document.getElementById('deduction-detail-section');
-      if (t < 0) {
-        disp.className = 'text-lg font-extrabold px-3 py-0.5 rounded-lg bg-rose-100 text-rose-700';
-        dedSec.classList.remove('hidden');
-      } else if (t > 0) {
-        disp.className = 'text-lg font-extrabold px-3 py-0.5 rounded-lg bg-emerald-100 text-emerald-700';
-        dedSec.classList.add('hidden');
-      } else {
-        disp.className = 'text-lg font-extrabold px-3 py-0.5 rounded-lg bg-slate-100 text-slate-800';
-        dedSec.classList.add('hidden');
-      }
-    }
-
-    function updateScoreButtonsHighlight() {
-      const cur = APP_STATE.selectedScoreTenth;
-      document.querySelectorAll('#score-buttons-grid button').forEach(btn => {
-        const val = Number(btn.dataset.tenth);
-        let cls = 'py-2 rounded-lg text-xs font-bold border transition ';
-        if (val === cur) {
-          if (val < 0) cls += 'bg-rose-600 text-white border-rose-600 shadow-xs';
-          else if (val > 0) cls += 'bg-emerald-600 text-white border-emerald-600 shadow-xs';
-          else cls += 'bg-slate-800 text-white border-slate-800 shadow-xs';
-        } else {
-          if (val < 0) cls += 'bg-rose-50/50 text-rose-800 border-rose-200 hover:bg-rose-100';
-          else if (val > 0) cls += 'bg-emerald-50/50 text-emerald-800 border-emerald-200 hover:bg-emerald-100';
-          else cls += 'bg-slate-50 text-slate-800 border-slate-300 hover:bg-slate-100';
-        }
-        btn.className = cls;
-      });
-    }
-
-    function selectTargetClass(classNum) {
-      APP_STATE.selectedClassNum = classNum;
-      APP_STATE.selectedDeductionItems = [];
-      APP_STATE.pendingPhotos = [];
-      document.getElementById('photo-preview-grid').innerHTML = '';
-      document.getElementById('photo-count-badge').textContent = '已選 0 張';
-      document.getElementById('deduct-other-note').value = '';
-      document.getElementById('deduct-toilet-room').value = '';
-
-      renderScorerClassGrid();
-
-      const ctx = APP_STATE.scorerContext;
-      const g = APP_STATE.selectedTargetGrade;
-      const area = APP_STATE.selectedTargetArea;
-      const clsId = String(g * 100 + classNum);
-      const slotKey = clsId + '_' + area;
-      const areaInfo = (ctx.cleaningAreas || {})[clsId] || {};
-
-      document.getElementById('scorer-form-card').classList.remove('hidden');
-      document.getElementById('selected-class-title').textContent =
-        `${areaInfo.displayName || clsId}（${clsId}）— ${area}`;
-      document.getElementById('selected-class-meta').textContent =
-        areaInfo.locationTag ? `教室位置屬性：${areaInfo.locationTag}` : '';
-
-      // 檢查今日是否已評過（自動勾選修正單提示）
-      const u = APP_STATE.user;
-      const progressMap = u.role === 'student'
-        ? (ctx.todayStudentProgress || {})
-        : ((ctx.todayTeacherProgress || {})[String(g)] || {});
-      const existing = progressMap[slotKey];
-      document.getElementById('chk-is-correction').checked = Boolean(existing);
-
-      // 師長重複評分提醒
-      const dupBox = document.getElementById('same-day-teacher-alert');
-      if (u.role === 'teacher_scorer' && existing && existing.scorerName !== u.scorerName) {
-        document.getElementById('same-day-teacher-alert-text').textContent =
-          `⚠️ 提醒：此班今日已由「${existing.scorerName}」評分（${(existing.scoreTenth / 10).toFixed(1)} 分），若非重複評分請確認。`;
-        dupBox.classList.remove('hidden');
-      } else {
-        dupBox.classList.add('hidden');
-      }
-
-      // 昨日已有扣分提醒
-      const prevDed = (ctx.previousDayDeducted || {})[slotKey];
-      const prevBox = document.getElementById('prev-day-alert');
-      if (prevDed) {
-        document.getElementById('prev-day-alert-detail').textContent =
-          `${prevDed.date} 扣 ${(prevDed.scoreTenth / 10).toFixed(1)} 分｜地點：${prevDed.location}｜原因：${prevDed.items}`;
-        prevBox.classList.remove('hidden');
-      } else {
-        prevBox.classList.add('hidden');
-      }
-
-      // 連動生成掃區下拉選單
-      populateLinkedLocations(areaInfo, area);
-      // 連動生成扣分細項膠囊按鈕
-      populateDeductionPills(area);
-      // 預設歸零 0.0 分
-      setScoreTenth(0);
-
-      document.getElementById('scorer-form-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    function populateLinkedLocations(areaInfo, area) {
-      const sel = document.getElementById('deduct-location-select');
-      const toiletWrap = document.getElementById('deduct-toilet-room-wrap');
-      const noteEl = document.getElementById('deduct-boundary-note');
-      sel.innerHTML = '<option value="">-- 請選擇被扣分的具體掃區位置 --</option>';
-
-      if (areaInfo.boundaryNote) {
-        noteEl.textContent = '📌 掃區界線備註：' + areaInfo.boundaryNote;
-        noteEl.classList.remove('hidden');
-      } else {
-        noteEl.classList.add('hidden');
-      }
-
-      if (area === '公共區') {
-        toiletWrap.classList.add('hidden');
-        (areaInfo.publicLocations || []).forEach(loc => {
-          const opt = document.createElement('option');
-          opt.value = loc;
-          opt.textContent = loc;
-          sel.appendChild(opt);
+        // 掃區下拉選項
+        const locList = getLocationOptionsForClass(clsId, area);
+        // 若舊紀錄有自訂文字不在選單內，也保留顯示
+        const allLocs = (rowState.location && locList.indexOf(rowState.location) === -1)
+          ? [rowState.location].concat(locList)
+          : locList;
+        let locOptsHtml = '<option value="">-- 請選擇被扣分掃區 --</option>';
+        allLocs.forEach(loc => {
+          locOptsHtml += `<option value="${escapeHtmlAttr(loc)}" ${loc === rowState.location ? 'selected' : ''}>${escapeHtmlText(loc)}</option>`;
         });
-      } else if (area === '責任區') {
-        toiletWrap.classList.add('hidden');
-        const fixedResp = [
-          '教室內部（地面、講台、黑板溝槽、桌椅）',
-          '窗戶與窗台（玻璃、軌道溝槽、外瓷磚平台）',
-          '教室外部走廊（地面、掃具擺放）',
-          '垃圾與資源回收區'
-        ];
-        fixedResp.forEach(loc => {
-          const opt = document.createElement('option');
-          opt.value = loc;
-          opt.textContent = loc;
-          sel.appendChild(opt);
+
+        // 扣分細項下拉選項
+        let dedOptsHtml = '<option value="">＋ 點選加入扣分細項（可重複選取）</option>';
+        deductionOptions.forEach(it => {
+          dedOptsHtml += `<option value="${escapeHtmlAttr(it.name)}">${escapeHtmlText(it.name)}</option>`;
         });
-        (areaInfo.sinkLocations || []).forEach(sink => {
-          const opt = document.createElement('option');
-          opt.value = '【輪值洗手台/飲水機】' + sink;
-          opt.textContent = '【輪值洗手台/飲水機】' + sink;
-          sel.appendChild(opt);
-        });
-      } else if (area === '班廁') {
-        toiletWrap.classList.remove('hidden');
-        (areaInfo.toiletLocations || []).forEach(tLoc => {
-          const opt = document.createElement('option');
-          opt.value = tLoc;
-          opt.textContent = tLoc;
-          sel.appendChild(opt);
-        });
+
+        // 已選扣分細項標籤
+        const tagsHtml = rowState.deductionItems.map((itemText, idx) => `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-600 text-white text-xs font-bold">
+            <span>${escapeHtmlText(itemText)}</span>
+            <button type="button" onclick="removeBatchDeductionItem(${c}, ${idx})" class="hover:text-rose-200 font-extrabold ml-0.5">✕</button>
+          </span>
+        `).join('');
+
+        const hasOtherSelected = rowState.deductionItems.some(t => t.indexOf('其他') !== -1);
+
+        // 照片縮圖（包含既有已上傳照片 + 新拍待上傳照片）
+        const existingPhotosHtml = (rowState.existingPhotos || []).map((p, idx) => `
+          <div class="relative w-14 h-14 rounded-lg overflow-hidden border border-emerald-400 bg-slate-100 shrink-0" title="今日已上傳照片">
+            <img src="${p.url}" referrerpolicy="no-referrer" onerror="handlePhotoImgError(this, '${p.fileId}')" onclick="openLightbox('${p.url}', '${clsId} 已上傳照片')" class="w-full h-full object-cover cursor-zoom-in" />
+            <span class="absolute bottom-0 inset-x-0 bg-emerald-700/85 text-white text-[9px] text-center leading-tight">已存</span>
+          </div>
+        `).join('');
+
+        const newPhotosHtml = (rowState.newPhotos || []).map((p, idx) => `
+          <div class="relative w-14 h-14 rounded-lg overflow-hidden border border-rose-400 bg-slate-100 shrink-0">
+            <img src="${p.dataUrl}" class="w-full h-full object-cover" />
+            <button type="button" onclick="removeBatchNewPhoto(${c}, ${idx})" class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/75 text-white text-[10px] font-bold flex items-center justify-center">✕</button>
+          </div>
+        `).join('');
+
+        const totalPhotos = (rowState.existingPhotos || []).length + (rowState.newPhotos || []).length;
+
+        const rowDiv = document.createElement('div');
+        rowDiv.id = `batch-row-${c}`;
+        rowDiv.className = `p-3.5 sm:px-4 sm:py-3.5 transition ${rowBg}`;
+
+        rowDiv.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+            <!-- 1. 班級欄 -->
+            <div class="lg:col-span-2 flex items-center justify-between lg:flex-col lg:items-start gap-1">
+              <div class="flex items-center gap-2">
+                <span class="text-base sm:text-lg font-extrabold text-slate-900">${gNames[g]}${c}</span>
+                <span class="text-xs font-semibold text-slate-500">(${clsId})</span>
+                ${prevDed ? `<span title="前一個上課日扣 ${(prevDed.scoreTenth/10).toFixed(1)} 分：${escapeHtmlAttr(prevDed.items)}" class="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-bold">🟠 昨扣</span>` : ''}
+              </div>
+              ${areaInfo.boundaryNote ? `<p class="text-[11px] text-amber-800 leading-snug">📌 ${escapeHtmlText(areaInfo.boundaryNote)}</p>` : ''}
+            </div>
+
+            <!-- 2. 加扣分下拉選單 -->
+            <div class="lg:col-span-2">
+              <label class="block lg:hidden text-xs font-bold text-slate-500 mb-1">加扣分</label>
+              <select onchange="onBatchScoreChange(${c}, this.value)" class="w-full rounded-xl border px-3 py-2 text-sm font-bold outline-none transition ${isNeg ? 'border-rose-500 bg-rose-100/80 text-rose-900' : (isPos ? 'border-emerald-500 bg-emerald-100/80 text-emerald-900' : 'border-slate-300 bg-white text-slate-800')}">
+                ${scoreOptsHtml}
+              </select>
+            </div>
+
+            <!-- 3. 掃區下拉選單 (扣分時亮起必填) -->
+            <div class="lg:col-span-3 ${isNeg ? '' : 'hidden lg:block lg:opacity-35 lg:pointer-events-none'}">
+              <label class="block lg:hidden text-xs font-bold text-rose-800 mb-1">掃區地點 <span class="text-rose-600">*</span></label>
+              <select onchange="onBatchLocationChange(${c}, this.value)" ${isNeg ? '' : 'disabled'} class="w-full rounded-xl border ${isNeg && !rowState.location ? 'border-rose-400 bg-white' : 'border-slate-300 bg-white'} px-2.5 py-2 text-sm outline-none">
+                ${locOptsHtml}
+              </select>
+              ${area === '班廁' && isNeg ? `
+                <input type="text" value="${escapeHtmlAttr(rowState.toiletRoom)}" onchange="onBatchToiletRoomChange(${c}, this.value)" placeholder="填寫廁所間數/位置(如第2間)" class="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs outline-none" />
+              ` : ''}
+            </div>
+
+            <!-- 4. 扣分細項下拉選單 + 連續複選標籤 -->
+            <div class="lg:col-span-3 ${isNeg ? '' : 'hidden lg:block lg:opacity-35 lg:pointer-events-none'}">
+              <label class="block lg:hidden text-xs font-bold text-rose-800 mb-1">扣分細項（可連續點選多項）<span class="text-rose-600">*</span></label>
+              <select onchange="onBatchAddDeductionItem(${c}, this)" ${isNeg ? '' : 'disabled'} class="w-full rounded-xl border ${isNeg && rowState.deductionItems.length === 0 ? 'border-rose-400 bg-white' : 'border-slate-300 bg-white'} px-2.5 py-2 text-sm outline-none">
+                ${dedOptsHtml}
+              </select>
+              ${tagsHtml ? `<div class="flex flex-wrap gap-1.5 mt-1.5">${tagsHtml}</div>` : ''}
+              ${isNeg && (hasOtherSelected || rowState.otherNote) ? `
+                <input type="text" value="${escapeHtmlAttr(rowState.otherNote)}" onchange="onBatchOtherNoteChange(${c}, this.value)" placeholder="請補充說明其他缺失..." class="mt-1.5 w-full rounded-lg border border-rose-300 bg-white px-2.5 py-1.5 text-xs outline-none" />
+              ` : ''}
+            </div>
+
+            <!-- 5. 連續上傳多張相片 -->
+            <div class="lg:col-span-2 ${isNeg ? '' : 'hidden lg:block lg:opacity-35 lg:pointer-events-none'}">
+              <label class="block lg:hidden text-xs font-bold text-rose-800 mb-1">上傳相片（可連續多張，已附 ${totalPhotos} 張）<span class="text-rose-600">*</span></label>
+              <div class="flex flex-wrap items-center gap-2">
+                ${existingPhotosHtml}
+                ${newPhotosHtml}
+                <label class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl border-2 border-dashed ${isNeg && totalPhotos === 0 ? 'border-rose-400 bg-rose-50 text-rose-800' : 'border-teal-500 bg-teal-50/60 text-teal-900'} hover:bg-teal-100/70 text-xs font-bold cursor-pointer transition">
+                  <span>📷</span>
+                  <span>${totalPhotos > 0 ? '＋繼續拍/選' : '拍照/選多張'}</span>
+                  <input type="file" accept="image/*" multiple ${isNeg ? '' : 'disabled'} onchange="handleBatchRowPhotos(${c}, event)" class="hidden" />
+                </label>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(rowDiv);
+      }
+
+      updateBatchSummaryStats();
+    }
+
+    function escapeHtmlText(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function escapeHtmlAttr(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function onBatchScoreChange(classNum, valStr) {
+      APP_STATE.batchRows[classNum].scoreTenth = Number(valStr);
+      saveBatchDraftToLocal();
+      renderBatchClassTable();
+    }
+
+    function onBatchLocationChange(classNum, val) {
+      APP_STATE.batchRows[classNum].location = val;
+      saveBatchDraftToLocal();
+    }
+
+    function onBatchToiletRoomChange(classNum, val) {
+      APP_STATE.batchRows[classNum].toiletRoom = val.trim();
+      saveBatchDraftToLocal();
+    }
+
+    function onBatchAddDeductionItem(classNum, selectEl) {
+      const val = selectEl.value;
+      selectEl.value = '';
+      if (!val) return;
+      const list = APP_STATE.batchRows[classNum].deductionItems;
+      if (list.indexOf(val) === -1) {
+        list.push(val);
+        saveBatchDraftToLocal();
+        renderBatchClassTable();
       }
     }
 
-    function populateDeductionPills(area) {
-      const container = document.getElementById('deduction-pills-container');
-      container.innerHTML = '';
-      const items = ((APP_STATE.scorerContext.deductionItems || {})[area]) || [];
-      items.forEach(it => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = it.name;
-        btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:border-rose-400 transition text-left';
-        btn.onclick = () => {
-          const idx = APP_STATE.selectedDeductionItems.indexOf(it.name);
-          if (idx === -1) {
-            APP_STATE.selectedDeductionItems.push(it.name);
-            btn.className = 'px-3 py-1.5 rounded-full text-xs font-bold border border-rose-600 bg-rose-600 text-white shadow-xs transition text-left';
-          } else {
-            APP_STATE.selectedDeductionItems.splice(idx, 1);
-            btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:border-rose-400 transition text-left';
-          }
-        };
-        container.appendChild(btn);
-      });
+    function removeBatchDeductionItem(classNum, idx) {
+      APP_STATE.batchRows[classNum].deductionItems.splice(idx, 1);
+      saveBatchDraftToLocal();
+      renderBatchClassTable();
+    }
+
+    function onBatchOtherNoteChange(classNum, val) {
+      APP_STATE.batchRows[classNum].otherNote = val.trim();
+      saveBatchDraftToLocal();
+    }
+
+    function updateBatchSummaryStats() {
+      let posCount = 0;
+      let negCount = 0;
+      let zeroCount = 0;
+      for (let c = 1; c <= 16; c++) {
+        const s = (APP_STATE.batchRows[c] && APP_STATE.batchRows[c].scoreTenth) || 0;
+        if (s > 0) posCount++;
+        else if (s < 0) negCount++;
+        else zeroCount++;
+      }
+      const text = `統計：加分 ${posCount} 班 ｜ 0.0 分 ${zeroCount} 班 ｜ 扣分 ${negCount} 班`;
+      document.getElementById('scorer-batch-summary').textContent = text;
+      document.getElementById('footer-batch-summary').textContent = text;
     }
 
     // =========================================================================
-    // 5. 多張照片選擇、Canvas 前端壓縮與背景佇列上傳
+    // 5. 連續多張照片壓縮、批次一次送出 16 班分數與背景佇列上傳
     // =========================================================================
-    async function handlePhotoFilesSelected(e) {
+    async function handleBatchRowPhotos(classNum, e) {
       const files = Array.from(e.target.files || []);
       if (files.length === 0) return;
 
@@ -1410,19 +1460,24 @@
       try {
         for (const file of files) {
           const compressedDataUrl = await compressImageFile(file, 1024, 0.72);
-          APP_STATE.pendingPhotos.push({
+          APP_STATE.batchRows[classNum].newPhotos.push({
             id: 'P_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
             dataUrl: compressedDataUrl,
             name: file.name
           });
         }
-        renderPendingPhotoPreviews();
+        renderBatchClassTable();
       } catch (err) {
         showToast('照片處理失敗：' + err.message, 'error');
       } finally {
         hideLoader();
         e.target.value = '';
       }
+    }
+
+    function removeBatchNewPhoto(classNum, idx) {
+      APP_STATE.batchRows[classNum].newPhotos.splice(idx, 1);
+      renderBatchClassTable();
     }
 
     function compressImageFile(file, maxSide, quality) {
@@ -1457,102 +1512,90 @@
       });
     }
 
-    function renderPendingPhotoPreviews() {
-      const grid = document.getElementById('photo-preview-grid');
-      grid.innerHTML = '';
-      document.getElementById('photo-count-badge').textContent = `已選 ${APP_STATE.pendingPhotos.length} 張`;
+    async function submitAllBatchScores() {
+      const g = APP_STATE.selectedTargetGrade;
+      const area = APP_STATE.selectedTargetArea;
+      const gNames = { 1: '一', 2: '二', 3: '三' };
 
-      APP_STATE.pendingPhotos.forEach((p, idx) => {
-        const wrap = document.createElement('div');
-        wrap.className = 'relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100';
-        wrap.innerHTML = `
-          <img src="${p.dataUrl}" class="w-full h-full object-cover" />
-          <button type="button" onclick="removePendingPhoto(${idx})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs font-bold flex items-center justify-center">✕</button>
-        `;
-        grid.appendChild(wrap);
-      });
-    }
+      const itemsPayload = [];
+      const errors = [];
 
-    function removePendingPhoto(idx) {
-      APP_STATE.pendingPhotos.splice(idx, 1);
-      renderPendingPhotoPreviews();
-    }
+      for (let c = 1; c <= 16; c++) {
+        const clsId = String(g * 100 + c);
+        const clsDisplay = `${gNames[g]}${c}`;
+        const r = APP_STATE.batchRows[c];
+        const scoreTenth = Number(r.scoreTenth || 0);
 
-    async function submitCurrentClassScore() {
-      if (!APP_STATE.selectedClassNum) {
-        showToast('請先點選要評分的班級。', 'warning');
+        let specificLocation = r.location || '';
+        if (area === '班廁' && r.toiletRoom) {
+          specificLocation = specificLocation ? `${specificLocation}（${r.toiletRoom}）` : r.toiletRoom;
+        }
+
+        const totalPhotos = (r.existingPhotos || []).length + (r.newPhotos || []).length;
+
+        if (scoreTenth < 0) {
+          if (!specificLocation) {
+            errors.push(`${clsDisplay} 尚未選擇被扣分的掃區地點`);
+          }
+          if (r.deductionItems.length === 0 && !r.otherNote) {
+            errors.push(`${clsDisplay} 尚未選擇扣分細項`);
+          }
+          if (totalPhotos < 1) {
+            errors.push(`${clsDisplay} 尚未上傳現場佐證照片`);
+          }
+        }
+
+        itemsPayload.push({
+          classNum: c,
+          classId: clsId,
+          scoreTenth: scoreTenth,
+          specificLocation: scoreTenth < 0 ? specificLocation : '',
+          deductionItems: scoreTenth < 0 ? r.deductionItems : [],
+          otherNote: scoreTenth < 0 ? r.otherNote : '',
+          newPhotoCount: scoreTenth < 0 ? (r.newPhotos || []).length : 0,
+          keepExistingPhotos: scoreTenth < 0 && (r.existingPhotos || []).length > 0 && (r.newPhotos || []).length === 0
+        });
+      }
+
+      if (errors.length > 0) {
+        showToast('請先補齊以下必填欄位：
+' + errors.slice(0, 3).join('；') + (errors.length > 3 ? ` 等共 ${errors.length} 項` : ''), 'warning');
         return;
       }
-      const g = APP_STATE.selectedTargetGrade;
-      const clsId = String(g * 100 + APP_STATE.selectedClassNum);
-      const area = APP_STATE.selectedTargetArea;
-      const scoreTenth = APP_STATE.selectedScoreTenth;
-      const isCorrection = document.getElementById('chk-is-correction').checked;
-
-      let specificLocation = document.getElementById('deduct-location-select').value;
-      const toiletRoom = document.getElementById('deduct-toilet-room').value.trim();
-      if (area === '班廁' && toiletRoom) {
-        specificLocation = specificLocation ? `${specificLocation}（${toiletRoom}）` : toiletRoom;
-      }
-      const otherNote = document.getElementById('deduct-other-note').value.trim();
-
-      if (scoreTenth < 0) {
-        if (!specificLocation) {
-          showToast('請選擇被扣分的掃區具體地點。', 'warning');
-          return;
-        }
-        if (APP_STATE.selectedDeductionItems.length === 0 && !otherNote) {
-          showToast('請至少勾選一項扣分細項或填寫其他說明。', 'warning');
-          return;
-        }
-        if (APP_STATE.pendingPhotos.length < 1) {
-          showToast('有扣分時，必須至少上傳一張現場照片！', 'warning');
-          return;
-        }
-      }
-
-      const clientRecordId = 'REC_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-      const photosToUpload = [...APP_STATE.pendingPhotos];
 
       try {
-        // 1. 先送出分數紀錄
-        const res = await callApi('submitScore', {
-          clientRecordId: clientRecordId,
-          classId: clsId,
+        const res = await callApi('submitBatchScores', {
+          targetGrade: g,
           area: area,
-          scoreTenth: scoreTenth,
-          isCorrection: isCorrection,
-          issueSlip: scoreTenth < 0,
-          specificLocation: specificLocation,
-          deductionItems: APP_STATE.selectedDeductionItems,
-          otherNote: otherNote,
-          expectedPhotoCount: photosToUpload.length
+          items: itemsPayload
         });
 
-        showToast(`✅ ${clsId} 班分數（${(scoreTenth / 10).toFixed(1)}）已成功送出！`, 'success');
+        clearBatchDraftFromLocal();
+        showToast(`✅ 高${gNames[g]}「${area}」16 班今日評分已全部送出完成！`, 'success');
 
-        // 2. 若有照片，加入背景單一佇列依序上傳（避免觸發 GAS 並行上限）
-        if (photosToUpload.length > 0) {
-          photosToUpload.forEach((p, idx) => {
-            APP_STATE.uploadQueue.push({
-              recordId: res.recordId,
-              classId: clsId,
-              area: area,
-              dateStr: res.dateStr,
-              seq: idx + 1,
-              base64Data: p.dataUrl,
-              retries: 0
+        // 將所有有新拍照片的班級加入背景單一上傳佇列
+        (res.results || []).forEach(rItem => {
+          const rowState = APP_STATE.batchRows[rItem.classNum];
+          if (rowState && rowState.scoreTenth < 0 && rowState.newPhotos && rowState.newPhotos.length > 0) {
+            rowState.newPhotos.forEach((p, idx) => {
+              APP_STATE.uploadQueue.push({
+                recordId: rItem.recordId,
+                classId: rItem.classId,
+                area: area,
+                dateStr: res.dateStr,
+                seq: idx + 1,
+                base64Data: p.dataUrl,
+                retries: 0
+              });
             });
-          });
-          processPhotoUploadQueue();
-        }
+          }
+        });
 
-        // 清空目前表單並重新整理今日進度
-        APP_STATE.pendingPhotos = [];
-        document.getElementById('photo-preview-grid').innerHTML = '';
-        document.getElementById('scorer-form-card').classList.add('hidden');
-        APP_STATE.selectedClassNum = null;
-        await initScorerWorkspace();
+        if (APP_STATE.uploadQueue.length > 0) {
+          processPhotoUploadQueue();
+        } else {
+          await initScorerWorkspace();
+        }
       } catch (err) {
         showToast(err.message, 'error');
       }
@@ -1592,6 +1635,7 @@
       APP_STATE.isUploadingQueue = false;
       banner.classList.add('hidden');
       showToast('📷 所有現場佐證照片已全數歸檔完成！', 'success');
+      await initScorerWorkspace();
     }
 
     // =========================================================================
